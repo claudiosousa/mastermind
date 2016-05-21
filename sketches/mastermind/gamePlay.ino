@@ -10,7 +10,7 @@
 
 byte numberOfColors = 4;
 byte repeatColors = 0;
-  
+
 byte colors[] = {
   color0, color1, color2, color3, color4, color5
 };
@@ -23,11 +23,16 @@ bool board_isGameStarted = false;
 bool board_isGameFinished = false;
 bool board_isGameWon = false;
 
-void initializeLeds() {
+void initializeGame() {
+  board_isInConfiguration = false;
+  board_isGameStarted = false;
+  board_isGameFinished = false;
+  board_isGameWon = false;
   resetSrs();
 }
 
 void newGame() {
+  saveGameSettings();
   board_isGameFinished = false;
   board_isGameWon = false;
   board_isGameStarted = true;
@@ -62,7 +67,7 @@ void newGame() {
 #endif
   board_trial = 0;
 
-  initializeLeds();
+  resetSrs();
 }
 
 void modifyColorButton(byte buttonIndex) {
@@ -84,9 +89,14 @@ void modifyColorButton(byte buttonIndex) {
 }
 
 void verifyTrialCombination() {
-  if (board_isGameFinished)
+  if (board_isGameFinished) {
+    initializeGame();
     return;
+  }
 
+  if (!board_isGameStarted)
+    return;
+    
   for (byte i = 0; i < secretLength; i++) {
     if (board_trial_colors[i] == 255)
       return;
@@ -140,8 +150,9 @@ void verifyTrialCombination() {
   if (!board_isGameFinished)
     playSubmitMoveSound();
   else {
-    if (board_isGameWon) {
-    } else
+    if (board_isGameWon)
+      playWinSound();
+    else
       playGameOverSound();
   }
 }

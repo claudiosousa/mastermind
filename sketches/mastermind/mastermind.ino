@@ -1,14 +1,22 @@
 #define DEBUG false
 
 void setup() {
-  initializeLeds();
-  setupLeds();
   randomSeed(analogRead(0));
+
+  setupLeds();
+  initializeGame();
+
+  initializeConfig();
+  initializeSound();
+  initializeGameSettings();
+  
 #if(DEBUG)
   setupComm();
 #endif
+
   setupButons();
   initializeTimers();
+  playStartSound();
 }
 
 void loop() {

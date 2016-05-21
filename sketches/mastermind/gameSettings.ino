@@ -1,4 +1,19 @@
 
+void initializeGameSettings() {
+  numberOfColors = getNbColorsConfig();
+  if (numberOfColors < 4 || numberOfColors > 6)
+    numberOfColors = 4;
+  repeatColors = getRepeatColorsConfig();
+}
+
+bool gameSettingsModified = false;
+
+void saveGameSettings() {
+  if (gameSettingsModified) {
+    setColorsConfig(numberOfColors, repeatColors);
+  }
+}
+
 void changeNbColorsButton() {
   if (board_isGameStarted)
     return;
@@ -9,6 +24,8 @@ void changeNbColorsButton() {
   numberOfColors++;
   if (numberOfColors > 6)
     numberOfColors = 4;
+
+  gameSettingsModified = true;
 
   displayNbColors();
 }
@@ -22,6 +39,9 @@ void changeRepeatColorsButton() {
     return;
   }
   repeatColors = !repeatColors;
+
+  gameSettingsModified = true;
+
   displayColorsRepeation();
 }
 
@@ -45,13 +65,14 @@ void displayColorsRepeation() {
   for (int r = 0; r < 4; r++) {
     byte row = repeatColor[r];
     for (int c = 0; c < 4; c++) {
-      byte color = repeatColors && (row & (1 << (3-c))) ? colors[0] : nocolor;
+      byte color = repeatColors && (row & (1 << (3 - c))) ? colors[0] : nocolor;
       setRowPositionColor(maxTrials - r - 1, c, color);
     }
   }
 }
 
 void showCurrentConfiguration() {
+  gameSettingsModified = false;
   displayNbColors();
   displayColorsRepeation();
   board_isInConfiguration = true;
